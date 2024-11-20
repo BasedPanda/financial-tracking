@@ -1,0 +1,43 @@
+{
+    "short_name": "FinTrack",
+    "name": "FinTrack - Personal Finance Analytics",
+    "icons": [
+      {
+        "src": "favicon.ico",
+        "sizes": "64x64 32x32 24x24 16x16",
+        "type": "image/x-icon"
+      },
+      {
+        "src": "logo192.png",
+        "type": "image/png",
+        "sizes": "192x192",
+        "purpose": "any maskable"
+      },
+      {
+        "src": "logo512.png",
+        "type": "image/png",
+        "sizes": "512x512",
+        "purpose": "any maskable"
+      }
+    ],
+    "start_url": ".",
+    "display": "standalone",
+    "theme_color": "#000000",
+    "background_color": "#ffffff",
+    "orientation": "portrait-primary",
+    "categories": ["finance", "productivity", "utilities"],
+    "description": "Track expenses, analyze spending patterns, and achieve your financial goals",
+    "screenshots": [
+      {
+        "src": "screenshot1.png",
+        "type": "image/png",
+        "sizes": "1280x720"
+      },
+      {
+        "src": "screenshot2.png",
+        "type": "image/png",
+        "sizes": "1280x720"
+      }
+    ],
+    "prefer_related_applications": false
+  }
