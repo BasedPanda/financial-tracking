@@ -1,0 +1,162 @@
+// main.scss
+@import 'variables';
+
+// Base styles
+html {
+  font-family: $font-family-base;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// Dark mode styles
+.dark {
+  color-scheme: dark;
+  
+  background-color: map-get(map-get($colors, 'gray'), 900);
+  color: map-get(map-get($colors, 'gray'), 100);
+
+  .card {
+    background-color: map-get(map-get($colors, 'gray'), 800);
+    border-color: map-get(map-get($colors, 'gray'), 700);
+  }
+
+  input, select, textarea {
+    background-color: map-get(map-get($colors, 'gray'), 800);
+    border-color: map-get(map-get($colors, 'gray'), 700);
+    color: map-get(map-get($colors, 'gray'), 100);
+
+    &::placeholder {
+      color: map-get(map-get($colors, 'gray'), 500);
+    }
+
+    &:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 2px var(--color-primary);
+    }
+  }
+}
+
+// Custom scrollbar
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: map-get(map-get($colors, 'gray'), 300);
+  border-radius: map-get($border-radius, 'full');
+
+  &:hover {
+    background-color: map-get(map-get($colors, 'gray'), 400);
+  }
+
+  .dark & {
+    background-color: map-get(map-get($colors, 'gray'), 600);
+
+    &:hover {
+      background-color: map-get(map-get($colors, 'gray'), 500);
+    }
+  }
+}
+
+// Utility classes
+.transition-base {
+  transition-duration: map-get($transitions, 'base');
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.focus-ring {
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-primary), 0 0 0 4px rgba(var(--color-primary), 0.1);
+  }
+}
+
+// Print styles
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  .card {
+    box-shadow: none !important;
+    border: 1px solid map-get(map-get($colors, 'gray'), 200) !important;
+  }
+}
+
+// Helper mixins
+@mixin responsive($breakpoint) {
+  @media (min-width: map-get($breakpoints, $breakpoint)) {
+    @content;
+  }
+}
+
+@mixin truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Animation keyframes
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+// Animation classes
+.fade-in {
+  animation: fadeIn map-get($transitions, 'base') ease-in-out;
+}
+
+.slide-in {
+  animation: slideIn map-get($transitions, 'base') ease-in-out;
+}
+
+// Accessibility
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+// Responsive container padding
+.container {
+  @include responsive('sm') {
+    padding-left: map-get($spacing, 4);
+    padding-right: map-get($spacing, 4);
+  }
+
+  @include responsive('lg') {
+    padding-left: map-get($spacing, 6);
+    padding-right: map-get($spacing, 6);
+  }
+}
