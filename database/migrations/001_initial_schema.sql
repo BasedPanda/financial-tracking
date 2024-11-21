@@ -1,4 +1,5 @@
--- schema.sql
+BEGIN;
+
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
@@ -8,7 +9,7 @@ CREATE TYPE transaction_type AS ENUM ('income', 'expense', 'transfer');
 CREATE TYPE account_type AS ENUM ('checking', 'savings', 'credit', 'investment');
 CREATE TYPE budget_period AS ENUM ('daily', 'weekly', 'monthly', 'yearly');
 
--- Users table
+-- Create users table
 CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     email VARCHAR(255) UNIQUE NOT NULL,
@@ -19,7 +20,7 @@ CREATE TABLE users (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Plaid credentials table
+-- Create plaid_credentials table
 CREATE TABLE plaid_credentials (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
@@ -32,7 +33,7 @@ CREATE TABLE plaid_credentials (
     UNIQUE(user_id, item_id)
 );
 
--- Accounts table
+-- Create accounts table
 CREATE TABLE accounts (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
@@ -48,7 +49,7 @@ CREATE TABLE accounts (
     UNIQUE(user_id, plaid_account_id)
 );
 
--- Categories table
+-- Create categories table
 CREATE TABLE categories (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name VARCHAR(255) NOT NULL,
@@ -58,7 +59,7 @@ CREATE TABLE categories (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Transactions table
+-- Create transactions table
 CREATE TABLE transactions (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
@@ -75,7 +76,7 @@ CREATE TABLE transactions (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Budgets table
+-- Create budgets table
 CREATE TABLE budgets (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
@@ -89,69 +90,4 @@ CREATE TABLE budgets (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Goals table
-CREATE TABLE goals (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    name VARCHAR(255) NOT NULL,
-    target_amount DECIMAL(12,2) NOT NULL,
-    current_amount DECIMAL(12,2) DEFAULT 0,
-    deadline DATE,
-    is_completed BOOLEAN DEFAULT false,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
--- Notifications table
-CREATE TABLE notifications (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    title VARCHAR(255) NOT NULL,
-    message TEXT NOT NULL,
-    type VARCHAR(50) NOT NULL,
-    is_read BOOLEAN DEFAULT false,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
--- Create indexes
-CREATE INDEX idx_transactions_user_id_date ON transactions(user_id, date);
-CREATE INDEX idx_transactions_account_id ON transactions(account_id);
-CREATE INDEX idx_transactions_category_id ON transactions(category_id);
-CREATE INDEX idx_budgets_user_id ON budgets(user_id);
-CREATE INDEX idx_accounts_user_id ON accounts(user_id);
-CREATE INDEX idx_goals_user_id ON goals(user_id);
-CREATE INDEX idx_notifications_user_id_created_at ON notifications(user_id, created_at);
-
--- Create updated_at triggers
-CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = CURRENT_TIMESTAMP;
-    RETURN NEW;
-END;
-$$ language 'plpgsql';
-
-CREATE TRIGGER update_users_updated_at
-    BEFORE UPDATE ON users
-    FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
-
-CREATE TRIGGER update_accounts_updated_at
-    BEFORE UPDATE ON accounts
-    FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
-
-CREATE TRIGGER update_transactions_updated_at
-    BEFORE UPDATE ON transactions
-    FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
-
-CREATE TRIGGER update_budgets_updated_at
-    BEFORE UPDATE ON budgets
-    FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
-
-CREATE TRIGGER update_goals_updated_at
-    BEFORE UPDATE ON goals
-    FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
+COMMIT;
