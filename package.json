@@ -1,0 +1,44 @@
+{
+    "name": "fintrack",
+    "version": "1.0.0",
+    "description": "FinTrack - Personal Finance Analytics Platform",
+    "private": true,
+    "workspaces": [
+      "client",
+      "server"
+    ],
+    "scripts": {
+      "start": "concurrently \"npm run start:server\" \"npm run start:client\"",
+      "start:client": "cd client && npm start",
+      "start:server": "cd server && npm start",
+      "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+      "dev:client": "cd client && npm run dev",
+      "dev:server": "cd server && npm run dev",
+      "install:all": "npm install && npm run install:client && npm run install:server",
+      "install:client": "cd client && npm install",
+      "install:server": "cd server && npm install",
+      "build": "npm run build:client",
+      "build:client": "cd client && npm run build",
+      "test": "npm run test:client && npm run test:server",
+      "test:client": "cd client && npm test",
+      "test:server": "cd server && npm test",
+      "lint": "npm run lint:client && npm run lint:server",
+      "lint:client": "cd client && npm run lint",
+      "lint:server": "cd server && npm run lint",
+      "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
+      "db:migrate": "cd server && npm run migrate",
+      "db:seed": "cd server && npm run seed",
+      "db:reset": "cd server && npm run db:reset",
+      "prepare": "husky install"
+    },
+    "devDependencies": {
+      "concurrently": "^8.2.2",
+      "husky": "^8.0.3",
+      "lint-staged": "^15.1.0",
+      "prettier": "^3.1.0"
+    },
+    "engines": {
+      "node": ">=14.0.0",
+      "npm": ">=7.0.0"
+    }
+  }
